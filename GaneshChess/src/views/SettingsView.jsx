@@ -123,6 +123,19 @@ export const SettingsView = ({ settings, onUpdateSettings }) => {
 
             <div className="toggle-item">
               <div>
+                <div className="toggle-title">3D Chessboard Perspective</div>
+                <div className="toggle-sub">Enable authentic 3D perspective tilt with upright standing pieces</div>
+              </div>
+              <button
+                className={`toggle-switch ${settings.is3DView ? 'toggle-on' : ''}`}
+                onClick={() => handleToggle('is3DView')}
+              >
+                <span className="toggle-knob"></span>
+              </button>
+            </div>
+
+            <div className="toggle-item">
+              <div>
                 <div className="toggle-title">Show Coordinates</div>
                 <div className="toggle-sub">Display rank (1-8) and file (a-h) along board edges</div>
               </div>

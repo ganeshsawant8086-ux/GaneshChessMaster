@@ -12,6 +12,8 @@ const DEFAULT_SETTINGS = {
   showLegalMoves: true,
   showEvalBar: true,
   autoQueen: false,
+  is3DView: true, // 3D View enabled
+  boardAngle3D: 28, // tilt angle in degrees
   playerName: 'Player 1',
   opponentName: 'Ganesh AI'
 };

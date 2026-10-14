@@ -9,7 +9,7 @@ import { GameOverModal } from '../components/GameOverModal';
 import { sounds } from '../services/soundEffects';
 import { getBestMove, getEvaluationDisplay, getTacticalHint } from '../services/aiEngine';
 import { recordGameHistory } from '../services/storage';
-import { AlertCircle, Sparkles, X } from 'lucide-react';
+import { AlertCircle, Sparkles, X, Box } from 'lucide-react';
 
 /**
  * Main Chess Arena View
@@ -27,6 +27,7 @@ export const PlayView = ({
   const [moves, setMoves] = useState([]);
   const [lastMove, setLastMove] = useState(null);
   const [isFlipped, setIsFlipped] = useState(gameConfig.playerColor === 'b');
+  const [is3D, setIs3D] = useState(settings.is3DView ?? true);
   const [isAiThinking, setIsAiThinking] = useState(false);
   const [activeHint, setActiveHint] = useState(null);
 
@@ -506,6 +507,7 @@ export const PlayView = ({
                 chess={chessRef.current}
                 boardState={boardState}
                 isFlipped={isFlipped}
+                is3D={is3D}
                 theme={settings.boardTheme}
                 pieceStyle={settings.pieceStyle}
                 showCoordinates={settings.showCoordinates}
@@ -518,19 +520,30 @@ export const PlayView = ({
                 soundEnabled={settings.soundEnabled}
               />
 
-              {/* Status Pill Badge */}
-              <div className="board-status-badge">
-                {isAiThinking ? (
-                  <span className="status-thinking">
-                    <span className="dot-pulse"></span> Ganesh AI is computing move...
-                  </span>
-                ) : chessRef.current.inCheck() ? (
-                  <span className="status-check">
-                    <AlertCircle size={15} /> Check! King is threatened
-                  </span>
-                ) : (
-                  <span>{statusMessage}</span>
-                )}
+              {/* Status and 3D View Toggle Row */}
+              <div className="board-status-row">
+                <div className="board-status-badge">
+                  {isAiThinking ? (
+                    <span className="status-thinking">
+                      <span className="dot-pulse"></span> Ganesh AI is computing move...
+                    </span>
+                  ) : chessRef.current.inCheck() ? (
+                    <span className="status-check">
+                      <AlertCircle size={15} /> Check! King is threatened
+                    </span>
+                  ) : (
+                    <span>{statusMessage}</span>
+                  )}
+                </div>
+
+                <button
+                  className={`btn-toggle-3d-pill ${is3D ? 'pill-3d-active' : ''}`}
+                  onClick={() => setIs3D(prev => !prev)}
+                  title="Toggle between 3D perspective and 2D flat view"
+                >
+                  <Box size={14} />
+                  <span>{is3D ? '3D View' : '2D View'}</span>
+                </button>
               </div>
             </div>
           </div>
@@ -585,6 +598,8 @@ export const PlayView = ({
             onRestart={handleRestart}
             onNewGame={onOpenNewGameModal}
             onFlipBoard={handleFlipBoard}
+            is3D={is3D}
+            onToggle3D={() => setIs3D(prev => !prev)}
             onResign={handleResign}
             onOfferDraw={handleOfferDraw}
             onHint={handleHint}

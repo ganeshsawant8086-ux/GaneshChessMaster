@@ -1,8 +1,8 @@
 import React from 'react';
-import { RotateCcw, RotateCw, Flag, Handshake, Lightbulb, PlusCircle, ArrowUpDown } from 'lucide-react';
+import { RotateCcw, RotateCw, Flag, Handshake, Lightbulb, PlusCircle, ArrowUpDown, Box } from 'lucide-react';
 
 /**
- * Game Controls bar with Undo, Restart, New Game, Flip, Resign, Draw, Hint
+ * Game Controls bar with Undo, Restart, New Game, Flip, 3D Toggle, Resign, Draw, Hint
  */
 export const GameControls = ({
   onUndo,
@@ -10,6 +10,8 @@ export const GameControls = ({
   onRestart,
   onNewGame,
   onFlipBoard,
+  is3D = false,
+  onToggle3D,
   onResign,
   onOfferDraw,
   onHint,
@@ -47,6 +49,15 @@ export const GameControls = ({
         >
           <ArrowUpDown size={18} />
           <span>Flip</span>
+        </button>
+
+        <button
+          className={`control-btn btn-3d ${is3D ? 'btn-3d-active' : ''}`}
+          onClick={onToggle3D}
+          title="Toggle between 3D perspective and 2D flat view"
+        >
+          <Box size={18} />
+          <span>{is3D ? '3D On' : '2D Flat'}</span>
         </button>
 
         {showHintBtn && (

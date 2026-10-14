@@ -12,6 +12,7 @@ export const ChessBoard = ({
   chess,
   boardState, // 8x8 array from chess.board()
   isFlipped = false,
+  is3D = false,
   theme = 'emerald',
   pieceStyle = 'classic',
   showCoordinates = true,
@@ -169,88 +170,96 @@ export const ChessBoard = ({
   const displayFiles = isFlipped ? [...FILES].reverse() : FILES;
 
   return (
-    <div className={`chess-board-wrapper theme-${theme}`}>
-      <div className="chess-board">
-        {displayRanks.map((rank, rankIdx) => (
-          <div key={rank} className="board-row">
-            {displayFiles.map((file, fileIdx) => {
-              const squareKey = `${file}${rank}`;
-              const actualFileIdx = FILES.indexOf(file);
-              const actualRankIdx = RANKS.indexOf(rank);
-              const piece = boardState ? boardState[actualRankIdx][actualFileIdx] : null;
+    <div className={`chess-scene-container ${is3D ? 'scene-3d-active' : ''}`}>
+      <div className={`chess-board-wrapper theme-${theme} ${is3D ? 'is-3d-view' : ''}`}>
+        <div className="chess-board">
+          {displayRanks.map((rank, rankIdx) => (
+            <div key={rank} className="board-row">
+              {displayFiles.map((file, fileIdx) => {
+                const squareKey = `${file}${rank}`;
+                const actualFileIdx = FILES.indexOf(file);
+                const actualRankIdx = RANKS.indexOf(rank);
+                const piece = boardState ? boardState[actualRankIdx][actualFileIdx] : null;
 
-              const isLight = (actualFileIdx + actualRankIdx) % 2 === 0;
-              const isSelected = selectedSquare === squareKey;
-              const isLegalMove = showLegalMoves && legalTargetSquares.some(m => m.to === squareKey);
-              const isCaptureMove = isLegalMove && (piece !== null || (selectedSquare && getPieceAtSquare(selectedSquare)?.type === 'p' && file !== selectedSquare[0]));
-              const isLastMoveSquare = lastMove && (lastMove.from === squareKey || lastMove.to === squareKey);
-              const isHintSquare = hintMove && (hintMove.from === squareKey || hintMove.to === squareKey);
-              const isKingInCheck = kingInCheckSquare === squareKey;
+                const isLight = (actualFileIdx + actualRankIdx) % 2 === 0;
+                const isSelected = selectedSquare === squareKey;
+                const isLegalMove = showLegalMoves && legalTargetSquares.some(m => m.to === squareKey);
+                const isCaptureMove = isLegalMove && (piece !== null || (selectedSquare && getPieceAtSquare(selectedSquare)?.type === 'p' && file !== selectedSquare[0]));
+                const isLastMoveSquare = lastMove && (lastMove.from === squareKey || lastMove.to === squareKey);
+                const isHintSquare = hintMove && (hintMove.from === squareKey || hintMove.to === squareKey);
+                const isKingInCheck = kingInCheckSquare === squareKey;
 
-              return (
-                <div
-                  key={squareKey}
-                  data-square={squareKey}
-                  className={`board-square ${isLight ? 'square-light' : 'square-dark'} ${
-                    isSelected ? 'square-selected' : ''
-                  } ${isLastMoveSquare ? 'square-last-move' : ''} ${
-                    isKingInCheck ? 'square-in-check' : ''
-                  } ${isHintSquare ? 'square-hint' : ''}`}
-                  onClick={() => handleSquareClick(squareKey, piece)}
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleDrop(e, squareKey)}
-                >
-                  {/* Square Coordinates */}
-                  {showCoordinates && (
-                    <>
-                      {/* Rank coordinate on first file */}
-                      {fileIdx === 0 && (
-                        <span className="coord-rank">{rank}</span>
-                      )}
-                      {/* File coordinate on bottom rank */}
-                      {rankIdx === 7 && (
-                        <span className="coord-file">{file}</span>
-                      )}
-                    </>
-                  )}
+                return (
+                  <div
+                    key={squareKey}
+                    data-square={squareKey}
+                    className={`board-square ${isLight ? 'square-light' : 'square-dark'} ${
+                      isSelected ? 'square-selected' : ''
+                    } ${isLastMoveSquare ? 'square-last-move' : ''} ${
+                      isKingInCheck ? 'square-in-check' : ''
+                    } ${isHintSquare ? 'square-hint' : ''}`}
+                    onClick={() => handleSquareClick(squareKey, piece)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, squareKey)}
+                  >
+                    {/* Square Coordinates */}
+                    {showCoordinates && (
+                      <>
+                        {/* Rank coordinate on first file */}
+                        {fileIdx === 0 && (
+                          <span className="coord-rank">{rank}</span>
+                        )}
+                        {/* File coordinate on bottom rank */}
+                        {rankIdx === 7 && (
+                          <span className="coord-file">{file}</span>
+                        )}
+                      </>
+                    )}
 
-                  {/* Piece */}
-                  {piece && (
-                    <div
-                      className={`piece-container ${piece.color === currentTurn && !isAiThinking ? 'piece-movable' : ''}`}
-                      draggable={piece.color === currentTurn && !isAiThinking}
-                      onDragStart={(e) => handleDragStart(e, squareKey, piece)}
-                    >
-                      <Piece
-                        type={piece.type}
-                        color={piece.color}
-                        styleType={pieceStyle}
-                      />
-                    </div>
-                  )}
+                    {/* Grounded 3D Base Shadow on Square */}
+                    {is3D && piece && (
+                      <div className="piece-3d-ground-shadow"></div>
+                    )}
 
-                  {/* Legal Move Indicators */}
-                  {isLegalMove && !isCaptureMove && (
-                    <div className="legal-move-dot"></div>
-                  )}
-                  {isCaptureMove && (
-                    <div className="legal-capture-ring"></div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))}
+                    {/* Piece */}
+                    {piece && (
+                      <div
+                        className={`piece-container ${piece.color === currentTurn && !isAiThinking ? 'piece-movable' : ''}`}
+                        draggable={piece.color === currentTurn && !isAiThinking}
+                        onDragStart={(e) => handleDragStart(e, squareKey, piece)}
+                      >
+                        <Piece
+                          type={piece.type}
+                          color={piece.color}
+                          styleType={pieceStyle}
+                          is3D={is3D}
+                        />
+                      </div>
+                    )}
+
+                    {/* Legal Move Indicators */}
+                    {isLegalMove && !isCaptureMove && (
+                      <div className="legal-move-dot"></div>
+                    )}
+                    {isCaptureMove && (
+                      <div className="legal-capture-ring"></div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+
+        {/* Promotion Modal */}
+        {pendingPromotion && (
+          <PromotionModal
+            color={pendingPromotion.color}
+            onSelect={handlePromotionSelect}
+            onCancel={() => setPendingPromotion(null)}
+          />
+        )}
       </div>
-
-      {/* Promotion Modal */}
-      {pendingPromotion && (
-        <PromotionModal
-          color={pendingPromotion.color}
-          onSelect={handlePromotionSelect}
-          onCancel={() => setPendingPromotion(null)}
-        />
-      )}
     </div>
   );
 };

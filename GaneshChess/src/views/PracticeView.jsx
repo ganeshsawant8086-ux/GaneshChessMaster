@@ -5,7 +5,7 @@ import { EvalBar } from '../components/EvalBar';
 import { CHESS_PUZZLES } from '../services/puzzles';
 import { getTacticalHint, getEvaluationDisplay } from '../services/aiEngine';
 import { sounds } from '../services/soundEffects';
-import { Sparkles, RotateCcw, Copy, Check, Lightbulb, Play, Compass, ArrowRight, Award } from 'lucide-react';
+import { Sparkles, RotateCcw, Copy, Check, Lightbulb, Play, Compass, ArrowRight, Award, Box } from 'lucide-react';
 
 /**
  * Practice, Puzzles, and Position Analysis View
@@ -16,6 +16,7 @@ export const PracticeView = ({ settings, initialFen = null }) => {
   const [puzzleStep, setPuzzleStep] = useState(0);
   const [puzzleStatus, setPuzzleStatus] = useState(null); // 'solving' | 'correct' | 'wrong'
   const [puzzleMessage, setPuzzleMessage] = useState(CHESS_PUZZLES[0].prompt);
+  const [is3D, setIs3D] = useState(settings.is3DView ?? true);
 
   // Analysis state
   const chessRef = useRef(new Chess(initialFen || undefined));
@@ -206,6 +207,7 @@ export const PracticeView = ({ settings, initialFen = null }) => {
                 chess={chessRef.current}
                 boardState={boardState}
                 isFlipped={isFlipped}
+                is3D={is3D}
                 theme={settings.boardTheme}
                 pieceStyle={settings.pieceStyle}
                 showCoordinates={settings.showCoordinates}
@@ -224,13 +226,23 @@ export const PracticeView = ({ settings, initialFen = null }) => {
             <span>
               Turn: <strong>{chessRef.current.turn() === 'w' ? 'White' : 'Black'} to move</strong>
             </span>
-            <button
-              className="btn-flip-subtle"
-              onClick={() => setIsFlipped(!isFlipped)}
-              title="Flip Board"
-            >
-              Flip Perspective
-            </button>
+            <div className="practice-strip-actions">
+              <button
+                className={`btn-toggle-3d-pill ${is3D ? 'pill-3d-active' : ''}`}
+                onClick={() => setIs3D(!is3D)}
+                title="Toggle 3D / 2D perspective"
+              >
+                <Box size={14} />
+                <span>{is3D ? '3D View' : '2D View'}</span>
+              </button>
+              <button
+                className="btn-flip-subtle"
+                onClick={() => setIsFlipped(!isFlipped)}
+                title="Flip Board"
+              >
+                Flip Board
+              </button>
+            </div>
           </div>
         </div>
 
