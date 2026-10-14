@@ -9,7 +9,7 @@ import { GameOverModal } from '../components/GameOverModal';
 import { sounds } from '../services/soundEffects';
 import { getBestMove, getEvaluationDisplay, getTacticalHint } from '../services/aiEngine';
 import { recordGameHistory } from '../services/storage';
-import { AlertCircle, Sparkles, X, Box, Lightbulb } from 'lucide-react';
+import { AlertCircle, Sparkles, X, Box, Lightbulb, CornerUpLeft, RotateCw, RotateCcw, Settings } from 'lucide-react';
 
 /**
  * Main Chess Arena View
@@ -18,6 +18,7 @@ export const PlayView = ({
   gameConfig,
   settings,
   onOpenNewGameModal,
+  onOpenSettings,
   onSwitchToPracticeWithFen
 }) => {
   // Core chess instance
@@ -119,7 +120,7 @@ export const PlayView = ({
     setIsClockRunning(false);
     const winnerColor = loserColor === 'w' ? 'Black' : 'White';
     const isPlayerWin = (gameConfig.playerColor === 'w' && winnerColor === 'White') ||
-                        (gameConfig.playerColor === 'b' && winnerColor === 'Black');
+      (gameConfig.playerColor === 'b' && winnerColor === 'Black');
 
     sounds.playGameOverSound ? sounds.playGameOverSound(isPlayerWin) : sounds.playVictory();
 
@@ -145,7 +146,7 @@ export const PlayView = ({
     if (chess.isCheckmate()) {
       const winner = chess.turn() === 'w' ? 'Black' : 'White';
       const isPlayerWin = (gameConfig.playerColor === 'w' && winner === 'White') ||
-                          (gameConfig.playerColor === 'b' && winner === 'Black');
+        (gameConfig.playerColor === 'b' && winner === 'Black');
 
       result = gameConfig.mode === 'vs-computer' ? (isPlayerWin ? 'win' : 'loss') : 'win';
       title = `Checkmate! ${winner} Wins!`;
@@ -496,8 +497,57 @@ export const PlayView = ({
             materialScore={topMaterialScore}
           />
 
-          {/* Board with Eval Bar */}
+          {/* Board with Eval Bar & Left Circular Action Dock (Matching 3D Reference) */}
           <div className="board-and-eval-container">
+            {/* 5 Circular Action Buttons on Board Left Side (Matching Reference Image) */}
+            <div className="board-left-action-dock" title="Quick Actions">
+              <button
+                className="btn-dock-circle btn-dock-exit"
+                onClick={onOpenNewGameModal}
+                title="New Game / Match Settings"
+              >
+                <CornerUpLeft size={21} strokeWidth={2.6} />
+              </button>
+
+              <button
+                className="btn-dock-circle btn-dock-restart"
+                onClick={handleRestart}
+                disabled={isAiThinking}
+                title="Restart Match"
+              >
+                <RotateCw size={21} strokeWidth={2.6} />
+              </button>
+
+              <button
+                className="btn-dock-circle btn-dock-undo"
+                onClick={handleUndo}
+                disabled={moves.length === 0 || isAiThinking || !!gameOverInfo}
+                title="Undo Move"
+              >
+                <RotateCcw size={21} strokeWidth={2.6} />
+              </button>
+
+              <button
+                className="btn-dock-circle btn-dock-hint"
+                onClick={handleHint}
+                disabled={!!gameOverInfo || isAiThinking}
+                title="Tactical Move Hint"
+              >
+                <Lightbulb size={21} strokeWidth={2.6} />
+              </button>
+
+              <button
+                className="btn-dock-circle btn-dock-settings"
+                onClick={() => {
+                  if (onOpenSettings) onOpenSettings();
+                  else handleFlipBoard();
+                }}
+                title="Settings & Themes"
+              >
+                <Settings size={21} strokeWidth={2.6} />
+              </button>
+            </div>
+
             {settings.showEvalBar && (
               <EvalBar evaluation={evaluation} isFlipped={isFlipped} />
             )}

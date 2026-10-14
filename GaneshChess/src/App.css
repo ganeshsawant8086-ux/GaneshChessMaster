@@ -193,8 +193,83 @@
 .board-and-eval-container {
   display: flex;
   align-items: stretch;
-  gap: 0.75rem;
+  gap: 0.85rem;
   position: relative;
+}
+
+/* ==========================================================================
+   Left Circular Action Dock (Matching 3D Reference Image)
+   ========================================================================== */
+.board-left-action-dock {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.15rem;
+  padding: 0.6rem 0.3rem;
+  z-index: 10;
+  user-select: none;
+}
+
+.btn-dock-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #2f2a24 0%, #1a1714 65%, #0f0d0c 100%);
+  border: 2px solid rgba(245, 158, 11, 0.42);
+  color: #f59e0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 6px 16px rgba(0, 0, 0, 0.75),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.16),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.85);
+  transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  cursor: pointer;
+}
+
+.btn-dock-circle svg {
+  filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.45));
+}
+
+.btn-dock-circle:hover:not(:disabled) {
+  transform: scale(1.12) translateY(-2px);
+  background: radial-gradient(circle at 38% 32%, #3a342c 0%, #24201b 65%, #151310 100%);
+  border-color: #f59e0b;
+  color: #fbbf24;
+  box-shadow: 
+    0 8px 20px rgba(245, 158, 11, 0.38),
+    0 3px 8px rgba(0, 0, 0, 0.8),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.25);
+}
+
+.btn-dock-circle:hover:not(:disabled) svg {
+  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.85));
+}
+
+.btn-dock-circle:active:not(:disabled) {
+  transform: scale(0.96) translateY(1px);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.8),
+    inset 0 2px 5px rgba(0, 0, 0, 0.9);
+}
+
+.btn-dock-circle:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.btn-dock-circle:disabled svg {
+  filter: none;
+}
+
+.btn-dock-hint {
+  border-color: rgba(245, 158, 11, 0.65);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3), 0 6px 16px rgba(0, 0, 0, 0.75);
 }
 
 /* ==========================================================================

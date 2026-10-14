@@ -62,6 +62,7 @@ export function App() {
             gameConfig={gameConfig}
             settings={settings}
             onOpenNewGameModal={() => setIsNewGameModalOpen(true)}
+            onOpenSettings={() => setActiveTab('settings')}
             onSwitchToPracticeWithFen={handleAnalyzeFromGame}
           />
         )}
