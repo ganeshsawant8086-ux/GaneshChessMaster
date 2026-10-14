@@ -221,6 +221,16 @@ export const ChessBoard = ({
                       <div className="piece-3d-ground-shadow"></div>
                     )}
 
+                    {/* Corner Bracket Reticle for Selected Square & Last Move */}
+                    {(isSelected || isLastMoveSquare) && (
+                      <div className={`square-corner-brackets ${isSelected ? 'brackets-selected' : 'brackets-last-move'}`}>
+                        <span className="bracket bracket-tl"></span>
+                        <span className="bracket bracket-tr"></span>
+                        <span className="bracket bracket-bl"></span>
+                        <span className="bracket bracket-br"></span>
+                      </div>
+                    )}
+
                     {/* Piece */}
                     {piece && (
                       <div
