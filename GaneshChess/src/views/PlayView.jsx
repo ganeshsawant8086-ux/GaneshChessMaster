@@ -9,7 +9,7 @@ import { GameOverModal } from '../components/GameOverModal';
 import { sounds } from '../services/soundEffects';
 import { getBestMove, getEvaluationDisplay, getTacticalHint } from '../services/aiEngine';
 import { recordGameHistory } from '../services/storage';
-import { AlertCircle, Sparkles, X, Box } from 'lucide-react';
+import { AlertCircle, Sparkles, X, Box, Lightbulb } from 'lucide-react';
 
 /**
  * Main Chess Arena View
@@ -503,6 +503,47 @@ export const PlayView = ({
             )}
 
             <div className="board-interactive-wrapper">
+              {/* Board Up Side Toolbar: Hint Button & 3D Toggle (Bord Up Side) */}
+              <div className="board-up-side-bar">
+                <div className="board-status-badge">
+                  {isAiThinking ? (
+                    <span className="status-thinking">
+                      <span className="dot-pulse"></span> Ganesh AI is computing move...
+                    </span>
+                  ) : chessRef.current.inCheck() ? (
+                    <span className="status-check">
+                      <AlertCircle size={15} /> Check! King is threatened
+                    </span>
+                  ) : (
+                    <span>{statusMessage}</span>
+                  )}
+                </div>
+
+                <div className="board-up-actions">
+                  {/* Hint Button on Board Up Side */}
+                  <button
+                    className="btn-board-hint-top"
+                    onClick={handleHint}
+                    disabled={!!gameOverInfo || isAiThinking}
+                    title="Get Tactical Move Hint (Board Up Side)"
+                  >
+                    <Lightbulb size={16} className="hint-bulb-gold" />
+                    <span>Hint</span>
+                  </button>
+
+                  {/* 3D View Toggle */}
+                  <button
+                    className={`btn-toggle-3d-pill ${is3D ? 'pill-3d-active' : ''}`}
+                    onClick={() => setIs3D(prev => !prev)}
+                    title="Toggle between 3D perspective and 2D flat view"
+                  >
+                    <Box size={14} />
+                    <span>{is3D ? '3D View' : '2D View'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Chessboard */}
               <ChessBoard
                 chess={chessRef.current}
                 boardState={boardState}
@@ -519,32 +560,6 @@ export const PlayView = ({
                 onMove={handleMove}
                 soundEnabled={settings.soundEnabled}
               />
-
-              {/* Status and 3D View Toggle Row */}
-              <div className="board-status-row">
-                <div className="board-status-badge">
-                  {isAiThinking ? (
-                    <span className="status-thinking">
-                      <span className="dot-pulse"></span> Ganesh AI is computing move...
-                    </span>
-                  ) : chessRef.current.inCheck() ? (
-                    <span className="status-check">
-                      <AlertCircle size={15} /> Check! King is threatened
-                    </span>
-                  ) : (
-                    <span>{statusMessage}</span>
-                  )}
-                </div>
-
-                <button
-                  className={`btn-toggle-3d-pill ${is3D ? 'pill-3d-active' : ''}`}
-                  onClick={() => setIs3D(prev => !prev)}
-                  title="Toggle between 3D perspective and 2D flat view"
-                >
-                  <Box size={14} />
-                  <span>{is3D ? '3D View' : '2D View'}</span>
-                </button>
-              </div>
             </div>
           </div>
 
@@ -558,9 +573,26 @@ export const PlayView = ({
           />
         </div>
 
-        {/* Right Column: Move History, Controls, Tactical Hint */}
+        {/* Right Column: Controls at UP SIDE, then Move History at DOWN SIDE */}
         <div className="sidebar-column">
-          {/* Tactical Hint Card */}
+          {/* Game Controls Bar (Second image moved to UP SIDE) */}
+          <GameControls
+            onUndo={handleUndo}
+            canUndo={moves.length > 0}
+            onRestart={handleRestart}
+            onNewGame={onOpenNewGameModal}
+            onFlipBoard={handleFlipBoard}
+            is3D={is3D}
+            onToggle3D={() => setIs3D(prev => !prev)}
+            onResign={handleResign}
+            onOfferDraw={handleOfferDraw}
+            onHint={handleHint}
+            showHintBtn={false}
+            isGameOver={!!gameOverInfo}
+            isAiThinking={isAiThinking}
+          />
+
+          {/* Tactical Hint Card (Displays immediately below controls when requested) */}
           {activeHint && (
             <div className="hint-card">
               <div className="hint-header">
@@ -579,7 +611,7 @@ export const PlayView = ({
             </div>
           )}
 
-          {/* Move History */}
+          {/* Move History (First image moved to DOWN SIDE) */}
           <MoveHistory
             moves={moves}
             currentMoveIndex={historyIndex}
@@ -589,23 +621,6 @@ export const PlayView = ({
             onNextMove={() => navigateToPly(historyIndex === -1 ? moves.length - 1 : historyIndex + 1)}
             onLatestMove={() => navigateToPly(-1)}
             pgn={chessRef.current.pgn()}
-          />
-
-          {/* Game Controls Bar */}
-          <GameControls
-            onUndo={handleUndo}
-            canUndo={moves.length > 0}
-            onRestart={handleRestart}
-            onNewGame={onOpenNewGameModal}
-            onFlipBoard={handleFlipBoard}
-            is3D={is3D}
-            onToggle3D={() => setIs3D(prev => !prev)}
-            onResign={handleResign}
-            onOfferDraw={handleOfferDraw}
-            onHint={handleHint}
-            showHintBtn={true}
-            isGameOver={!!gameOverInfo}
-            isAiThinking={isAiThinking}
           />
         </div>
       </div>

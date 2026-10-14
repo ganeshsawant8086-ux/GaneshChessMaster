@@ -520,13 +520,54 @@
   z-index: 10;
 }
 
-/* Status & 3D View Toggle Row */
-.board-status-row {
+/* Board Up Side Action Bar (Hint button & 3D Toggle on Board Up Side) */
+.board-up-side-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: 0.65rem;
   width: 100%;
+  margin-bottom: 0.35rem;
+}
+
+.board-up-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-board-hint-top {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-full);
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  color: #fbbf24;
+  font-size: 0.82rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.btn-board-hint-top:hover:not(:disabled) {
+  background: rgba(245, 158, 11, 0.28);
+  border-color: #f59e0b;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.35);
+  color: #ffffff;
+}
+
+.btn-board-hint-top:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.hint-bulb-gold {
+  color: #f59e0b;
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.6));
 }
 
 .board-status-badge {
